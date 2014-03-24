@@ -45,11 +45,6 @@ class ELBLogster(LogsterParser):
 
         '''Initialize any data structures or variables needed for keeping track
         of the tasty bits we find in the log we are parsing.'''
-        self.http_1xx = 0
-        self.http_2xx = 0
-        self.http_3xx = 0
-        self.http_4xx = 0
-        self.http_5xx = 0
         self.sent_bytes = 0
         self.rcvd_bytes = 0
         self.countries = defaultdict(int)
@@ -71,18 +66,6 @@ class ELBLogster(LogsterParser):
             self.countries[country_code] += 1
             self.statuses[status] += 1
 
-            if (status < 200):
-                self.http_1xx += 1
-            elif (status < 300):
-                self.http_2xx += 1
-            elif (status < 400):
-                self.http_3xx += 1
-            elif (status < 500):
-                self.http_4xx += 1
-            elif (status < 600):
-                self.http_5xx += 1
-            else:
-                raise LogsterParsingException, "regmatch failed to match"
         except Exception, e:
             print e
             raise LogsterParsingException, "regmatch or contents failed with %s" % e
@@ -95,11 +78,6 @@ class ELBLogster(LogsterParser):
 
         # Return a list of metrics objects
         metric_objects = [
-            MetricObject("http.100", (self.http_1xx), "HTTP 100 Responses"),
-            MetricObject("http.200", (self.http_2xx), "HTTP 200 Responses"),
-            MetricObject("http.300", (self.http_3xx), "HTTP 300 Responses"),
-            MetricObject("http.400", (self.http_4xx), "HTTP 400 Responses"),
-            MetricObject("http.500", (self.http_5xx), "HTTP 500 Responses"),
             MetricObject("bytes.sent", (self.sent_bytes), "Sent Bytes"),
             MetricObject("bytes.received", (self.rcvd_bytes), "Received Bytes"),
         ]
