@@ -53,6 +53,7 @@ class ELBLogster(LogsterParser):
         self.sent_bytes = 0
         self.rcvd_bytes = 0
         self.countries = defaultdict(int)
+        self.statuses  = defaultdict(int)
     
         
     def parse_line(self, line):
@@ -68,6 +69,7 @@ class ELBLogster(LogsterParser):
             country_code = self.country(line_parts[2].split(':')[0])
 
             self.countries[country_code] += 1
+            self.statuses[status] += 1
 
             if (status < 200):
                 self.http_1xx += 1
@@ -104,6 +106,9 @@ class ELBLogster(LogsterParser):
 
         for countrycode,countryhits in self.countries.items():
             metric_objects.append(MetricObject("country." + countrycode, countryhits, "Country hits"))
+
+        for statuscode,statushits in self.statuses.items():
+            metric_objects.append(MetricObject("http." + str(statuscode), statushits, "HTTP Status hits"))
 
         return metric_objects
 
