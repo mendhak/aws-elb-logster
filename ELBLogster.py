@@ -82,6 +82,7 @@ class ELBLogster(LogsterParser):
             else:
                 raise LogsterParsingException, "regmatch failed to match"
         except Exception, e:
+            print e
             raise LogsterParsingException, "regmatch or contents failed with %s" % e
 
 
@@ -92,13 +93,13 @@ class ELBLogster(LogsterParser):
 
         # Return a list of metrics objects
         metric_objects = [
-            MetricObject("http_1xx", (self.http_1xx / self.duration), "Responses per sec"),
-            MetricObject("http_2xx", (self.http_2xx / self.duration), "Responses per sec"),
-            MetricObject("http_3xx", (self.http_3xx / self.duration), "Responses per sec"),
-            MetricObject("http_4xx", (self.http_4xx / self.duration), "Responses per sec"),
-            MetricObject("http_5xx", (self.http_5xx / self.duration), "Responses per sec"),
-            MetricObject("sent_bytes", (self.sent_bytes), "Sent Bytes"),
-            MetricObject("rcvd_bytes", (self.rcvd_bytes), "Received Bytes"),
+            MetricObject("http.100", (self.http_1xx), "HTTP 100 Responses"),
+            MetricObject("http.200", (self.http_2xx), "HTTP 200 Responses"),
+            MetricObject("http.300", (self.http_3xx), "HTTP 300 Responses"),
+            MetricObject("http.400", (self.http_4xx), "HTTP 400 Responses"),
+            MetricObject("http.500", (self.http_5xx), "HTTP 500 Responses"),
+            MetricObject("bytes.sent", (self.sent_bytes), "Sent Bytes"),
+            MetricObject("bytes.received", (self.rcvd_bytes), "Received Bytes"),
         ]
 
         for countrycode,countryhits in self.countries.items():
